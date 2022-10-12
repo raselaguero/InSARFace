@@ -1,0 +1,337 @@
+{% extends 'base-map.html' %}
+
+{% block contenido %}
+<h1>Estudio "Detalles"</h1>
+
+<div class="container">
+    <div class="body d-md-flex align-items-center justify-content-between">
+        <div class="box-1 mt-md-0 mt-5" style="width: 50%;">
+            <div id="map"></div>
+<!--            <div id="coordinatedImagePreviewControlContainer"></div>-->
+<!--            <div></div>-->
+        </div>
+        <div class=" box-2 d-flex flex-column h-100" style="width: 50%;">
+            <div class="login-wrap">
+                {% if study %}
+                <div class="card">
+                    <div class="card-body">
+                        <h6 class="card-title">{{ study.investigator.name }} <span
+                                style="color: #0d6efd; font-size: 15px; font-weight: 600">|</span> <span>{{ study.updated_date }}</span>
+                        </h6>
+
+                        <div class="">
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label"
+                                     style="color: #0d6efd; font-size: 15px; font-weight: 600">Nombre
+                                </div>
+                                <div class="col-lg-9 col-md-8">{{ study.name }}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label"
+                                     style="color: #0d6efd; font-size: 15px; font-weight: 600">Descripcion
+                                </div>
+                                <div class="col-lg-9 col-md-8">{{ study.description|truncatewords:20 }}</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label"
+                                     style="color: #0d6efd; font-size: 15px; font-weight: 600">Pais
+                                </div>
+                                <div class="col-lg-9 col-md-8">{{ study.country }}</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label"
+                                     style="color: #0d6efd; font-size: 15px; font-weight: 600">Provincia(s)
+                                </div>
+                                <div class="col-lg-9 col-md-8">{{ study.province }}</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label"
+                                     style="color: #0d6efd; font-size: 15px; font-weight: 600">Municipio(s)
+                                </div>
+                                <div class="col-lg-9 col-md-8">{{ study.municipality|truncatewords:10 }}</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label"
+                                     style="color: #0d6efd; font-size: 15px; font-weight: 600">Consejo(s) Popular(es)
+                                </div>
+                                <div class="col-lg-9 col-md-8">{{ study.town|truncatewords:15 }}</div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body pb-0">
+                    <label class="card-title" style="color: #0d6efd; font-size: 15px; font-weight: 600">Analisis estadistico</label>
+
+                    <div id="trafficChart" style="min-height: 300px;" class="echart"></div>
+
+                </div>
+            </div>
+            {% else %}
+            <p>No hay informacion disponible.</p>
+            {% endif %}
+            <p class="text-center">Desea <a href="{% url 'studies' %}">regresar</a>?</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", () => {
+  echarts.init(document.querySelector("#trafficChart")).setOption({
+    tooltip: {
+      trigger: 'item'
+    },
+    legend: {
+      top: '5%',
+      left: 'center'
+    },
+    series: [{
+      name: 'Desplazamiento',
+      type: 'pie',
+      radius: ['40%', '70%'],
+      avoidLabelOverlap: false,
+      label: {
+        show: false,
+        position: 'center'
+      },
+      emphasis: {
+        label: {
+          show: true,
+          fontSize: '18',
+          fontWeight: 'bold'
+        }
+      },
+      labelLine: {
+        show: false
+      },
+      data: [{
+          value: 50,
+          name: 'Ascenso Max'
+        },
+        {
+          value: 2735,
+          name: 'Normalidad'
+        },
+        {
+          value: 1808,
+          name: 'Descenso Min'
+        },
+        {
+          value: 30,
+          name: 'Descenso Max'
+        },
+        {
+          value: 30,
+          name: 'Ascenso Min'
+        }
+      ]
+    }]
+  });
+});
+
+
+
+</script>
+<script type="text/javascript">
+let geo = {{ geom | safe }}
+let leg = {{ evidence | safe }}
+let header = {{ header | safe }}
+let displa = {{ displacements | safe }}
+
+let keys = new Array();
+let sections = new Array();
+if (Object.entries(leg).length > 0 && Object.entries(header).length > 0) {
+    for (var h = 0; h < header.length; h++) {
+        for (var l = 0; l < leg["features"].length; l++){
+            if(leg["features"][l]["properties"]["title"] == header[h]){
+                    keys.push({
+                              coordinates: [leg["features"][l]["geometry"]["coordinates"][1], leg["features"][l]["geometry"]["coordinates"][0]],
+                              text: leg["features"][l]["properties"]["name"],
+                              thumbnail: "/media/".concat(leg["features"][l]["properties"]["image"])
+                    })
+            }
+        }
+        sections.push({title: header[h], className: header[h], keys: keys})
+    }
+}
+
+var legend = {
+    title: "Evidencias",
+    description: "Compendio de afectaciones provocadas por subsidencias y desplazamientos del terreno.",
+    displayPopup: true,
+    sections: sections  // iterar el arreglo para mostrar cada section independiente
+};
+
+var osm = L.tileLayer('http://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {legend: legend});
+var google_satellite = L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}');
+
+var map = L.map('map', {attributionControl: false}).setView([21.8411, -78.85452],6).addLayer(osm);
+var baseMaps = {
+    "Google Satellite": google_satellite,
+    "Open Street Map": osm,
+};
+var geojson;
+
+function zoomToFeature(e) {
+    map.fitBounds(e.target.getBounds());
+}
+
+function resetHighlight(e) {
+    geojson.resetStyle(e.target);
+}
+
+function highlightFeature(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+        weight: 2,
+        color: 'orange',
+        dashArray: '',
+        fillOpacity: 0.45
+    });
+
+    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+        layer.bringToFront();
+    }
+}
+
+function highlightPoint(e) {
+    var layer = e.target;
+    info.update(layer.feature.properties);
+}
+
+function resetHighlightPoint(e) {
+    geojson.resetStyle(e.target);
+    info.update();
+}
+
+var myStyle = {
+    "weight": 2,
+    "opacity": 0.45
+};
+
+function onEachFeature(feature, layer) {
+    layer.on({
+        mouseover: highlightFeature,
+        mouseout: resetHighlight,
+        click: zoomToFeature
+    });
+    if (feature.properties && feature.properties.name) {
+        layer.bindPopup(feature.properties.name);
+    }
+}
+
+function onEachPoint(feature, layer) {
+    layer.on({
+            mouseover: highlightPoint,
+            mouseout: resetHighlightPoint,
+    });
+}
+
+var geojsonFeature = {
+    "type": "Feature",
+    "properties": {
+        "name": "Zona de estudio",
+    },
+    "geometry": geo
+};
+
+geojson = L.geoJSON(geojsonFeature,
+    { onEachFeature: onEachFeature },
+    { style: myStyle }
+);
+
+function getColor(d) {
+    return d > 0.137 ? '#1927F7' :
+           d > 0.084 ? '#1927F7' : // asc max
+           d > 0.03  ? '#1C88FB' : // asc min
+           d > -0.024 ? '#41F71A' : // normalidad
+           d > -0.077 ? '#F7D41B' : // desc min
+                          '#F91946'; // desc max
+}
+
+function style(feature) {
+    return {
+        radius: 4,
+        fillColor: getColor(feature.properties.altitude),
+        color: getColor(feature.properties.altitude),
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+    };
+}
+
+disjson = L.geoJSON(displa["features"], {
+    pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng, style(feature));
+    }, onEachFeature: onEachPoint});
+
+map.fitBounds([[geo["bbox"][1], geo["bbox"][0]], [geo["bbox"][3], geo["bbox"][2]]]);
+
+var imageUrl = '/media/imagenes/overlay.png';
+var imageBounds =  L.latLngBounds([[20.96070149888538, -74.81791937498036], [20.291456612216336, -75.78181167484061]]);
+var insar = L.imageOverlay(imageUrl, imageBounds, { opacity: 1, interactive: true }).addTo(map);
+
+geometry = {
+    'Zona de estudio': geojson,
+    'Desplazamientos': disjson,
+    'Raster': insar
+}
+
+var layerControl = L.control.layers(baseMaps,geometry).addTo(map);
+
+var info = L.control({position: 'topleft'});
+
+info.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+    this.update();
+    return this._div;
+};
+
+info.update = function (props) {
+    this._div.innerHTML = '<strong>Desplazamiento</strong>' + '<br/>' +(props ?
+        '<p>' + 'alt: ' + props.altitude + '</p>' + '<p>' + 'vel: ' + props.velocity + '</p>' : 'Nulo');
+};
+
+info.addTo(map);
+
+var legend_color = L.control({
+    position: 'topleft'
+});
+
+legend_color.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'info legend'),
+        altitudes = [-0.077, -0.024, 0.03, 0.084, 0.137],
+        labels = [];
+
+    for (var i = 0; i < altitudes.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + getColor(altitudes[i]) + '"></i> ' +
+            altitudes[i] + '<br>';
+    }
+    return div;
+};
+
+legend_color.addTo(map);
+L.control.mousePosition().addTo(map);
+L.control.scale().addTo(map);
+L.control.locate().addTo(map);
+L.control.fullscreen({ position: 'topleft', forceSeparateButton: true, forcePseudoFullscreen: true }).addTo(map);
+osm.addTo(map);
+google_satellite.addTo(map);
+
+//L.control.sideBySide(osm, google_satellite).addTo(map);
+
+var legendControl = (new L.Control.TileLegend()).addTo(map);
+</script>
+{% endblock %}
+

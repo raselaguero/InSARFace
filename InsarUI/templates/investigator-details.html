@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+<h2>Investigador "Detalles"</h2>
+    {% if investigator %}
+        <p><strong>Nombre:</strong> {{ investigator.name }}</p>
+        <p><strong>Titulo:</strong> {{ investigator.degree }}</p>
+        <p><strong>Correo:</strong> {{ investigator.email }}</p>
+        <p><strong>Telefono:</strong> {{ investigator.phone }}</p>
+        <a class="btn btn-secondary" href="{% url 'investigators' %}">Regresar</a>
+
+    {% else %}
+      <p>No hay informacion disponible.</p>
+    {% endif %}
+{% endblock %}

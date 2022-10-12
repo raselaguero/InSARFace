@@ -1,0 +1,342 @@
+{% extends 'base-map.html' %}
+
+{% block contenido %}
+<div class="container">
+    <div class="body d-md-flex align-items-center justify-content-between">
+        <div class="box-1 mt-md-0 mt-5">
+            <div id="map"></div>
+        </div>
+        <div class=" box-2 d-flex flex-column h-100">
+            <div class="login-wrap p-4 p-md-5">
+                <form action="" method="post" class="signin-form" name="form_study">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    {% if 'name' in field.html_name %}
+                    <div class="form-group mt-3" style="margin-top: 0.05rem !important;">
+                        <input
+                                type="text"
+                                name="{{ field.html_name }}"
+                                class="form-control"
+                                value="{{ field.value }}"
+                                maxlength="50"
+                                required
+                        />
+<!--                        id="{{ field.id_for_label }}"-->
+                        <label class="form-control-placeholder">{{ field.label_tag }}</label>
+                    </div>
+                    {% endif %}
+
+                    {% if 'description' in field.html_name %}
+                    <div class="form-group mt-3" style="margin-top: 2.5rem !important;">
+                        <input
+                                type="text"
+                                name="{{ field.html_name }}"
+                                class="form-control"
+                                value="{{ field.value }}"
+                                maxlength="250"
+                                id="{{ field.id_for_label }}"
+                                required
+                        />
+                        <label class="form-control-placeholder">{{ field.label_tag }}</label>
+                    </div>
+                    {% endif %}
+
+                    {% if 'help' in field.html_name %}
+                    <div class="form-group mt-3" style="margin-top: 2.5rem !important;">
+                        <input
+                                type="text"
+                                name="{{ field.html_name }}"
+                                class="form-control"
+                                value="{{ field.value }}"
+                                maxlength="1500"
+                                required
+                        />
+                        <label class="form-control-placeholder">{{ field.label_tag }}</label>
+                    </div>
+                    {% endif %}
+
+                    {% if 'is_public' in field.html_name %}
+                    <div class="form-group mt-3" style="margin-top: 0.5rem !important;">
+                        <label class="" style="color: #0d6efd; font-size: 12px; font-weight: 600">ESTADO:</label>
+<!--                        </br>-->
+                        {{ form.is_public }}
+                    </div>
+                    {% endif %}
+
+                    {% if 'file' in field.html_name %}
+                    <div class="form-group mt-3" style="margin-top: 0.5rem !important;">
+                        <label class="" style="color: #0d6efd; font-size: 12px; font-weight: 600">InSAR:</label>
+<!--                        </br>-->
+                        {{ form.file }}
+                    </div>
+                    {% endif %}
+
+                    {% if 'date_start' in field.html_name %}
+                        <div class="form-group mt-3 date" style="margin-top: 0.05rem !important;">
+                            <label class="" style="color: #0d6efd; font-size: 12px; font-weight: 600">PERIODO:</label>
+                            </br>
+                            <div class="input-group input-daterange">
+                                {{ form.date_start }}
+                                <div class=""></div>
+                                {{ form.date_final }}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if field.errors %}
+                    {% for error in field.errors %}
+                    <p style="font-size: 13px;">
+                        {{ error|escape }}
+                    </p>
+                    {% endfor %}
+                    {% endif %}
+                    {% endfor %}
+
+                    <div class="form-group">
+                        <button type="submit" class="form-control btn btn-primary rounded submit px-3">Agregar
+                        </button>
+                    </div>
+                </form>
+                <p class="text-center">Desea <a href="{% url 'studies' %}">regresar</a>?</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+let geo = {{ geom | safe }}
+let dis = {{ disp | safe }}
+var osm = L.tileLayer('http://a.tile.openstreetmap.org/{z}/{x}/{y}.png');
+var google_maps = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}');
+var google_hybrid = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}');
+var google_roads = L.tileLayer('https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}');
+var google_satellite = L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}');
+var google_terrain = L.tileLayer('https://mt1.google.com/vt/lyrs=t&x={x}&y={y}&z={z}');
+var stamen_terrain = L.tileLayer('http://a.tile.stamen.com/terrain/{z}/{x}/{y}.png');
+var stamen_toner = L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png');
+var stamen_watercolor = L.tileLayer('http://tile.stamen.com/watercolor/{z}/{x}/{y}.jpg');
+var carto_dark = L.tileLayer('http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png');
+var carto_light = L.tileLayer('https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png');
+
+var map = L.map('map').setView([21.8411, -78.85452],6).addLayer(osm);
+
+var geojson;
+
+function zoomToFeature(e) {
+    map.fitBounds(e.target.getBounds());
+}
+
+function resetHighlight(e) {
+    geojson.resetStyle(e.target);
+}
+
+function highlightFeature(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+        weight: 2,
+        color: 'orange',
+        dashArray: '',
+        fillOpacity: 0.45
+    });
+
+    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+        layer.bringToFront();
+    }
+}
+
+var myStyle = {
+    "weight": 2,
+    "opacity": 0.45
+};
+
+function highlightPoint(e) {
+    var layer = e.target;
+    info.update((layer.feature.properties.altitude).toString());
+}
+
+function resetHighlightPoint(e) {
+    geojson.resetStyle(e.target);
+    info.update();
+}
+
+function onEachPoint(feature, layer) {
+    layer.on({
+            mouseover: highlightPoint,
+            mouseout: resetHighlightPoint,
+    });
+}
+
+function onEachFeature(feature, layer) {
+    layer.on({
+        mouseover: highlightFeature,
+        mouseout: resetHighlight,
+        click: zoomToFeature
+    });
+    if (feature.properties && feature.properties.name) {
+        layer.bindPopup(feature.properties.name);
+    }
+}
+
+var geojsonFeature = {
+    "type": "Feature",
+    "properties": {
+        "name": "Area de estudio"
+    },
+    "geometry": geo
+};
+
+geojson = L.geoJSON(geojsonFeature,
+    { onEachFeature: onEachFeature },
+    { style: myStyle }
+);
+
+function getColor(d) {
+    return d > 0.137 ? '#1927F7' :
+           d > 0.084 ? '#1927F7' : // asc max
+           d > 0.03  ? '#1C88FB' : // asc min
+           d > -0.024 ? '#41F71A' : // normalidad
+           d > -0.077 ? '#F7D41B' : // desc min
+                          '#F91946'; // desc max
+}
+
+function style(feature) {
+    return {
+        radius: 4,
+        fillColor: getColor(feature.properties.altitude),
+        color: getColor(feature.properties.altitude),
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+    };
+}
+
+disjson = L.geoJSON(dis["features"], {
+    pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng, style(feature));
+    }, onEachFeature: onEachPoint});
+
+map.fitBounds([[geo["bbox"][1], geo["bbox"][0]], [geo["bbox"][3], geo["bbox"][2]]]);
+
+var baseMaps = {
+    "Open Street Map": osm,
+    "Google Maps": google_maps,
+    "Google Hybrid": google_hybrid,
+    "Google Roads": google_roads,
+    "Google Satellite": google_satellite,
+    "Google Terrain": google_terrain,
+    "Stamen Terrain": stamen_terrain,
+    "Stamen Toner": stamen_toner,
+    "Stamen Watercolor": stamen_watercolor,
+    "Carto Dark": carto_dark,
+    "Carto Light": carto_light
+};
+
+geometry = {
+    'Zona de estudio': geojson,
+    'Desplazamientos': disjson,
+<!--    'Raster': insar-->
+}
+
+L.control.layers(baseMaps,geometry).addTo(map);
+
+var info = L.control({position: 'topleft'});
+
+info.onAdd = function (map) {
+    this._div = L.DomUtil.create('div', 'info'); // create a div with a class "info"
+    this.update();
+    return this._div;
+};
+
+info.update = function (props) {
+    this._div.innerHTML = '<strong>Desplazamiento</strong>' + '<br/>' +(props ?
+        '<p>' + props + '</p>' : 'Nulo');
+};
+
+info.addTo(map);
+
+var legend_color = L.control({
+    position: 'topleft'
+});
+
+legend_color.onAdd = function (map) {
+    var div = L.DomUtil.create('div', 'info legend'),
+        altitudes = [-0.077, -0.024, 0.03, 0.084, 0.137],
+        labels = [];
+
+    for (var i = 0; i < altitudes.length; i++) {
+        div.innerHTML +=
+            '<i style="background:' + getColor(altitudes[i]) + '"></i> ' +
+            altitudes[i] + '<br>';
+    }
+    return div;
+};
+
+legend_color.addTo(map);
+L.control.mousePosition().addTo(map);
+L.control.scale().addTo(map);
+L.control.locate().addTo(map);
+L.control.fullscreen({ position: 'topleft', forceSeparateButton: true, forcePseudoFullscreen: true }).addTo(map);
+
+<!--L.geoJSON(geojsonFeature).addTo(map);-->
+
+map.pm.addControls({
+        position: 'topleft',
+        drawCircle: false,
+        drawMarker: false,
+        drawPolyline: false,
+        drawRectangle: true,
+        drawPolygon: true,
+        drawCircle: false,
+        drawCircleMarker: false,
+        drawText: false,
+        dragMode: true,
+        cutPolygon: false,
+        rotateMode: true
+        });
+
+    map.on('pm:create', (e) => {
+        e.layer.setStyle({ pmIgnore: false });
+        L.PM.reInitLayer(e.layer);
+        e.layer.on('pm:edit', (edit) => {  //edit
+        layerManager(edit);
+        });
+        e.layer.on('pm:drag', (drag) => {  //drag
+        layerManager(drag);
+        });
+        e.layer.on('pm:rotate', (rotate) => {  //rotate
+        layerManager(rotate);
+        });
+        layerManager(e);
+    });
+
+    function layerManager(e) {
+        if (e.shape == "Rectangle" || e.shape == "Polygon"){
+            //console.log(e.shape, e.layer._latlngs[0]);
+            var head = "";
+            var current = "";
+            var cont = new Array();
+            var str = new Array();
+            var objects = e.layer._latlngs[0];
+            objects.forEach(o => cont.push([o.lng,o.lat].toString()));
+            for (var k = 0; k < cont.length; k++){
+                current = cont[k].replace(',', ' ');
+                str.push(current);
+                if (k == 0){
+                    head = current;
+                }
+            }
+            var txt = "POLYGON((".concat(str.toString()).concat(',').concat(head).concat("))");
+            document.getElementsByName('help')[0].placeholder='';
+            document.form_study.help.value = txt;
+        }
+    }
+
+    map.on('pm:remove', (e) => {
+        document.form_study.help.value = '';
+        document.getElementsByName('help')[0].placeholder='';
+    })
+</script>
+{% endblock %}

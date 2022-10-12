@@ -1,0 +1,260 @@
+{% extends 'base-map.html' %}
+
+{% block contenido %}
+<div class="container">
+    <div class="body d-md-flex align-items-center justify-content-between">
+        <div class="box-1 mt-md-0 mt-5" style="width: 65%">
+            <div id="map"></div>
+        </div>
+        <div class=" box-2 d-flex flex-column h-100" style="width: 35%">
+            <div class="login-wrap p-4 p-md-5" style="padding-top: 1rem !important;">
+                <form action="" method="post" enctype="multipart/form-data" class="signin-form" name="form_study">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    {% if not 'is_public' in field.html_name and not 'file' in field.html_name and not 'date_start' in field.html_name and not 'date_final' in field.html_name %}
+
+                    <div class="form-group mt-3" style="margin-top: 2.5rem !important;">
+                        <input
+                                type="text"
+                                name="{{ field.html_name }}"
+                                class="form-control"
+                                maxlength="{% if 'description' in field.label_tag %}250{% endif %}"
+                                id="{{ field.id_for_label }}"
+                                required
+                        />
+                        <label class="form-control-placeholder">{{ field.label_tag }}</label>
+                    </div>
+                    {% endif %}
+                    {% if 'is_public' in field.html_name %}
+                    <div class="form-group mt-3" style="margin-top: 1rem !important;">
+                        <label class="" style="color: #0d6efd; font-size: 12px; font-weight: 600">ESTADO:</label>
+                        </br>
+                        {{ form.is_public }}
+                    </div>
+                    {% endif %}
+                    {% if 'file' in field.html_name %}
+                    <div class="form-group mt-3" style="margin-top: 1rem !important;">
+                        <label class="" style="color: #0d6efd; font-size: 12px; font-weight: 600">InSAR:</label>
+                        </br>
+                        {{ form.file }}
+                    </div>
+                    {% endif %}
+
+                    {% if 'date_start' in field.html_name %}
+                        <div class="form-group mt-3 date" style="margin-top: 1rem !important;">
+                            <label class="" style="color: #0d6efd; font-size: 12px; font-weight: 600">PERIODO:</label>
+                            </br>
+                            <div class="input-group input-daterange">
+                                {{ form.date_start }}
+                                <div class=""></div>
+                                {{ form.date_final }}
+                            </div>
+                        </div>
+                    {% endif %}
+
+
+                    {% if field.errors %}
+                    {% for error in field.errors %}
+                    <p style="font-size: 13px;">
+                        {{ error|escape }}
+                    </p>
+                    {% endfor %}
+                    {% endif %}
+                    {% endfor %}
+
+                    <div class="form-group">
+                        <button type="submit" class="form-control btn btn-primary rounded submit px-3">Agregar
+                        </button>
+                    </div>
+                </form>
+                <p class="text-center">Desea <a href="{% url 'studies' %}">regresar</a>?</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+
+<script type="text/javascript">
+var osm = L.tileLayer('http://a.tile.openstreetmap.org/{z}/{x}/{y}.png');
+var google_maps = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}');
+var google_hybrid = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}');
+var google_roads = L.tileLayer('https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}');
+var google_satellite = L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}');
+var google_terrain = L.tileLayer('https://mt1.google.com/vt/lyrs=t&x={x}&y={y}&z={z}');
+var stamen_terrain = L.tileLayer('http://a.tile.stamen.com/terrain/{z}/{x}/{y}.png');
+var stamen_toner = L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png');
+var stamen_watercolor = L.tileLayer('http://tile.stamen.com/watercolor/{z}/{x}/{y}.jpg');
+var carto_dark = L.tileLayer('http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png');
+var carto_light = L.tileLayer('https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png');
+
+var map = L.map('map').setView([21.8411, -78.85452],6).addLayer(osm);
+//var editableLayers = new L.FeatureGroup().addTo(map);
+var baseMaps = {
+    "Open Street Map": osm,
+    "Google Maps": google_maps,
+    "Google Hybrid": google_hybrid,
+    "Google Roads": google_roads,
+    "Google Satellite": google_satellite,
+    "Google Terrain": google_terrain,
+    "Stamen Terrain": stamen_terrain,
+    "Stamen Toner": stamen_toner,
+    "Stamen Watercolor": stamen_watercolor,
+    "Carto Dark": carto_dark,
+    "Carto Light": carto_light
+};
+
+L.control.layers(baseMaps).addTo(map);
+L.control.mousePosition().addTo(map);
+L.control.scale().addTo(map);
+L.control.locate().addTo(map);
+L.control.fullscreen({ position: 'topleft', forceSeparateButton: true, forcePseudoFullscreen: true }).addTo(map);
+
+<!--L.geoJSON(geojsonFeature).addTo(map);-->
+
+<!--var MyCustomMarker = L.Icon.extend({-->
+<!--        options: {-->
+<!--            shadowUrl: null,-->
+<!--            iconAnchor: new L.Point(12, 12),-->
+<!--            iconSize: new L.Point(24, 24),-->
+<!--            iconUrl: 'link/to/image.png'-->
+<!--        }-->
+<!--});-->
+
+/*var options = {
+        position: 'topleft',
+        draw: {
+            polyline: false,
+            polygon: {
+					shapeOptions: {
+						color: 'steelblue'
+					},
+					allowIntersection: false,
+					drawError: {
+						color: 'orange',
+						timeout: 1000
+					},
+					showArea: true,
+					metric: false,
+					repeatMode: true
+			},
+            circle: false,
+            circlemarker: false,
+            rectangle: {
+                shapeOptions: {
+                    clickable: true
+                }
+            },
+            marker: false
+        },
+        edit: {
+            featureGroup: editableLayers, //REQUIRED!!
+            remove: true
+        }
+    };*/
+
+    map.pm.addControls({
+        position: 'topleft',
+        drawCircle: false,
+        drawMarker: false,
+        drawPolyline: false,
+        drawRectangle: true,
+        drawPolygon: true,
+        drawCircle: false,
+        drawCircleMarker: false,
+        drawText: false,
+        dragMode: true,
+        cutPolygon: false,
+        rotateMode: true
+        });
+
+    map.on('pm:create', (e) => {
+        e.layer.setStyle({ pmIgnore: false });
+        L.PM.reInitLayer(e.layer);
+        e.layer.on('pm:edit', (edit) => {  //edit
+        layerManager(edit);
+        });
+        e.layer.on('pm:drag', (drag) => {  //drag
+        layerManager(drag);
+        });
+        e.layer.on('pm:rotate', (rotate) => {  //rotate
+        layerManager(rotate);
+        });
+        layerManager(e);
+    });
+
+    function layerManager(e) {
+        if (e.shape == "Rectangle" || e.shape == "Polygon"){
+            //console.log(e.shape, e.layer._latlngs[0]);
+            var head = "";
+            var current = "";
+            var cont = new Array();
+            var str = new Array();
+            var objects = e.layer._latlngs[0];
+            objects.forEach(o => cont.push([o.lng,o.lat].toString()));
+            for (var k = 0; k < cont.length; k++){
+                current = cont[k].replace(',', ' ');
+                str.push(current);
+                if (k == 0){
+                    head = current;
+                }
+            }
+            var txt = "POLYGON((".concat(str.toString()).concat(',').concat(head).concat("))");
+            document.getElementsByName('help')[0].placeholder='';
+            document.form_study.help.value = txt;
+        }
+    }
+
+    map.on('pm:remove', (e) => {
+        document.form_study.help.value = '';
+        document.getElementsByName('help')[0].placeholder='';
+    })
+
+
+
+    /*var drawControl = new L.Control.Draw(options);
+    map.addControl(drawControl);
+
+    map.on(L.Draw.Event.CREATED, function (e) {
+        var type = e.layerType,
+         layer = e.layer;
+
+
+            if (type == "marker" || type == "circle" || type == "circlemarker"){
+                console.log("POINT()", layer.getLatLng().lng, layer.getLatLng().lat);
+            }else{
+                var head = "";
+                var current = "";
+                var cont = new Array();
+                var str = new Array();
+                var objects = layer.getLatLngs()[0];
+                objects.forEach(e => cont.push([e.lng,e.lat].toString()));
+                for (var k = 0; k < cont.length; k++){
+                    current = cont[k].replace(',', ' ');
+                    str.push(current);
+                    if (k == 0){
+                        head = current;
+                    }
+                }
+                var txt = "POLYGON((".concat(str.toString()).concat(',').concat(head).concat("))");
+                document.getElementsByName('help')[0].placeholder='';
+                document.form_study.help.value = txt;
+            }
+        editableLayers.addLayer(layer);
+    });
+
+    map.on('draw:deleted', function (e) {
+         var layers = e.layers;
+         document.form_study.help.value = '';
+         document.getElementsByName('help')[0].placeholder='';
+         layers.eachLayer(function (layer) {
+             //do whatever you want; most likely save back to db
+         });
+    });*/
+
+
+
+
+</script>
+{% endblock %}

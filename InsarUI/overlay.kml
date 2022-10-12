@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.0">
+<Document>
+  <name>cherence_masked_displacement</name>
+  <description>Mask low coherence areas below 0.3
+S1A_IW_SLC__1SDV_20211218T105516_20211218T105543_041062_04E0D0_2C34_Orb_Stack_Ifg_Deb_DInSAR_ML_Flt_TC_Stack</description>
+  <GroundOverlay>
+    <name>Raster data</name>
+    <LatLonBox>
+      <north>20.96070149888538</north>
+      <south>20.291456612216336</south>
+      <east>-74.81791937498036</east>
+      <west>-75.78181167484061</west>
+    </LatLonBox>
+    <Icon>
+      <href>overlay.png</href>
+    </Icon>
+  </GroundOverlay>
+  <ScreenOverlay>
+    <name>Legend</name>
+    <Icon>
+      <href>legend.png</href>
+    </Icon>
+    <overlayXY x="0" y="1" xunits="fraction" yunits="fraction" />
+    <screenXY x="0" y="1" xunits="fraction" yunits="fraction" />
+  </ScreenOverlay>
+</Document>
+</kml>

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+<h2>Usuarios</h2>
+{% if users %}
+<a class="btn btn-primary" href="{% url 'user-create' %}" style="margin-bottom: 10px">Agregar</a>
+<table class="table table-borderless datatable">
+    <thead>
+    <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Usuario</th>
+        <th scope="col">Correo</th>
+        <th scope="col">Fecha/Hora de creacion</th>
+        <th scope="col">Fecha/Hora de ultimo ingreso</th>
+        <th scope="col">Admin</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for u in users %}
+    <tr>
+        <td>{{ u.id }}</td>
+        <td>{{ u.username }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.date_joined }}</td>
+        <td>{{ u.last_login }}</td>
+        {% if u.is_staff == True %}
+        <td><a href=""><span class="badge bg-success">Si</span></a></td>
+        {% else %}
+        <td><a href=""><span class="badge bg-danger">No</span></a></td>
+        {% endif %}
+        {% if u.is_active == True %}
+        <td><a href="{% url 'active-deactivate-user' u.id %}"><span class="badge bg-success">Activo</span></a></td>
+        {% else %}
+        <td><a href="{% url 'active-deactivate-user' u.id %}"><span class="badge bg-danger">Inactivo</span></a></td>
+        {% endif %}
+        <td class="btn-group">
+            {% if user.is_staff %}
+            <a class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="cambiar clave" href="{% url 'change-your-pass' u.id %}">
+                <i class="bi bi-key-fill me-1"> </i></a>
+            <a class="btn btn-outline-primary"  data-bs-toggle="tooltip" data-bs-placement="top" title="editar" href="{% url 'user-update' u.id %}">
+                <i class="bi bi-pencil-fill me-1"> </i></a>
+            <a class="btn btn-outline-primary"  data-bs-toggle="tooltip" data-bs-placement="top" title="eliminar" href="{% url 'user-delete' u.id %}">
+                <i class="bi bi-trash-fill me-1" > </i></a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<a class="btn btn-primary" href="{% url 'user-create' %}">Agregar</a>
+<p>No hay usuarios disponibles.</p>
+{% endif %}
+{% endblock %}

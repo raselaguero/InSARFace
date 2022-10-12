@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+
+    <div class="pagetitle">
+      <h1>Perfil</h1>
+    </div><!-- End Page Title -->
+
+    <section class="section profile">
+      {% if investigator %}
+      <div class="row">
+        <div class="col-xl-4">
+
+          <div class="card">
+            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+
+              <img src="" alt="Profile" class="rounded-circle">
+              <h2>{{ investigator.name }}</h2>
+              <h5>{{ investigator.degree }}</h5>
+              <div class="social-links mt-2">
+                <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
+                <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-xl-8">
+
+          <div class="card">
+            <div class="card-body pt-3">
+              <!-- Bordered Tabs -->
+              <ul class="nav nav-tabs nav-tabs-bordered">
+
+                <li class="nav-item">
+                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Informacion</button>
+                </li>
+
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Editar Perfil</button>
+                </li>
+
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings">Ajustes</button>
+                </li>
+
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Cambiar Clave</button>
+                </li>
+
+              </ul>
+              <div class="tab-content pt-2">
+
+                <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                  <h5 class="card-title">Acerca de</h5>
+                  <p class="small fst-italic">{{ investigator.about }}</p>
+
+                  <h5 class="card-title">Detalles de Perfil</h5>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label ">Nombre y Apellidos</div>
+                    <div class="col-lg-9 col-md-8">{{ investigator.name }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Institucion</div>
+                    <div class="col-lg-9 col-md-8">{{ investigator.company }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Titulo</div>
+                    <div class="col-lg-9 col-md-8">{{ investigator.degree }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Pais</div>
+                    <div class="col-lg-9 col-md-8">{{ investigator.country }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Direccion</div>
+                    <div class="col-lg-9 col-md-8">{{ investigator.address }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Telefono</div>
+                    <div class="col-lg-9 col-md-8">{{ investigator.phone }}</div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3 col-md-4 label">Correo</div>
+                    <div class="col-lg-9 col-md-8">{{ investigator.email }}</div>
+                  </div>
+
+                </div>
+
+                <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+
+
+                  <!-- Profile Edit Form -->
+                  <!--<form>
+                    <div class="row mb-3">
+                      <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Imagen de perfil</label>
+                      <div class="col-md-8 col-lg-9">
+                        <img src="assets/img/profile-img.jpg" alt="Profile">
+                        <div class="pt-2">
+                          <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></a>
+                          <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="id_name" class="col-md-4 col-lg-3 col-form-label">Nombre y Apellidos</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="name" type="text" class="form-control" id="id_name" value="">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="id_about" class="col-md-4 col-lg-3 col-form-label">Acerca de</label>
+                      <div class="col-md-8 col-lg-9">
+                        <textarea name="about" class="form-control" id="id_about" style="height: 100px"></textarea>
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="id_company" class="col-md-4 col-lg-3 col-form-label">Institucion</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="company" type="text" class="form-control" id="id_company" value="">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="id_degree" class="col-md-4 col-lg-3 col-form-label">Titulo</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="degree" type="text" class="form-control" id="id_degree" value="">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="id_country" class="col-md-4 col-lg-3 col-form-label">Pais</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="country" type="text" class="form-control" id="id_country" value="">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="id_address" class="col-md-4 col-lg-3 col-form-label">Direccion</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="address" type="text" class="form-control" id="id_address" value="">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="id_phone" class="col-md-4 col-lg-3 col-form-label">Telefono</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="phone" type="text" class="form-control" id="id_phone" value="">
+                      </div>
+                    </div>
+
+                    <div class="row mb-3">
+                      <label for="id_email" class="col-md-4 col-lg-3 col-form-label">Correo</label>
+                      <div class="col-md-8 col-lg-9">
+                        <input name="email" type="email" class="form-control" id="id_email" value="">
+                      </div>
+                    </div>
+
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                  </form>-->
+                  <!-- End Profile Edit Form -->
+
+                </div>
+
+                <div class="tab-pane fade pt-3" id="profile-settings">
+
+                  <!-- Settings Form -->
+                  <form>
+
+                    <div class="row mb-3">
+                      <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Email Notifications</label>
+                      <div class="col-md-8 col-lg-9">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="changesMade" checked>
+                          <label class="form-check-label" for="changesMade">
+                            Changes made to your account
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="newProducts" checked>
+                          <label class="form-check-label" for="newProducts">
+                            Information on new products and services
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="proOffers">
+                          <label class="form-check-label" for="proOffers">
+                            Marketing and promo offers
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="securityNotify" checked disabled>
+                          <label class="form-check-label" for="securityNotify">
+                            Security alerts
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="text-center">
+                      <button type="submit" class="btn btn-primary">Aceptar</button>
+                    </div>
+                  </form><!-- End settings Form -->
+
+                </div>
+
+                <div class="tab-pane fade pt-3" id="profile-change-password">
+                  <!-- Change Password Form -->
+                  {% include 'change-my-pass.html' %}
+                  <!-- End Change Password Form -->
+
+                </div>
+
+              </div><!-- End Bordered Tabs -->
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+      {% else %}
+      <p>No hay informacion disponible.</p>
+    {% endif %}
+    </section>
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+{% endblock %}

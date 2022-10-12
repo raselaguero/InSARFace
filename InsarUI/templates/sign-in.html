@@ -1,0 +1,87 @@
+{% extends 'base-login.html' %}
+
+{% block contenido %}
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-5">
+                <div class="wrap">
+                    <div class="img" style="background-image: url(../static_files/img/images.jpeg);"></div>
+                    <div class="login-wrap p-4 p-md-5">
+                        <div class="d-flex">
+                            <div class="w-100">
+                                <h3 class="mb-4">Logeo</h3>
+                            </div>
+<!--                            <div class="w-100">-->
+<!--                                <p class="social-media d-flex justify-content-end">-->
+<!--                                    <a href="#"-->
+<!--                                       class="social-icon d-flex align-items-center justify-content-center"><span-->
+<!--                                            class="fa fa-facebook"></span></a>-->
+<!--                                    <a href="#"-->
+<!--                                       class="social-icon d-flex align-items-center justify-content-center"><span-->
+<!--                                            class="fa fa-twitter"></span></a>-->
+<!--                                </p>-->
+<!--                            </div>-->
+                        </div>
+                        <form action="" method="post" class="signin-form">
+                            {% csrf_token %}
+                            {% for field in form %}
+                            <div class="form-group mt-3">
+                                <input
+                                        type="{% if 'password' in field.label_tag %}password{% else %}text{% endif %}"
+                                        name="{{ field.html_name }}"
+                                        class="form-control"
+                                        maxlength="{% if 'username' in field.label_tag %}150{% endif %}"
+                                        id="{{ field.id_for_label }}"
+                                        required
+                                />
+                                <label class="form-control-placeholder">{{ field.label_tag }}</label>
+                            </div>
+                            </br>
+                            {% if field.errors %}
+                            {% for error in field.errors %}
+                            <p style="font-size: 13px;">
+                                {{ error|escape }}
+                            </p>
+                            {% endfor %}
+                            {% endif %}
+                            {% endfor %}
+
+<!--                            <div class="form-group mt-3">-->
+<!--                                <input type="text" class="form-control" name="username" maxlength="150" id="id_username"-->
+<!--                                       required>-->
+<!--                                <label class="form-control-placeholder" for="id_username">usuario</label>-->
+<!--                            </div>-->
+<!--                            </br>-->
+<!--                            <div class="form-group">-->
+<!--                                <input id="password-field" type="password" class="form-control" name="password"-->
+<!--                                       maxlength="150" id="id_password" required>-->
+<!--                                <label class="form-control-placeholder" for="id_username">clave</label>-->
+<!--                                <span toggle="#password-field"-->
+<!--                                      class="fa fa-fw fa-eye field-icon toggle-password"></span>-->
+<!--                            </div>-->
+                            <div class="form-group">
+                                <button type="submit" class="form-control btn btn-primary rounded submit px-3">Logearme
+                                </button>
+                            </div>
+                            <div class="form-group d-md-flex">
+                                <div class="w-50 text-left">
+                                    <label class="checkbox-wrap checkbox-primary mb-0">Recuerdame
+                                        <input type="checkbox" checked>
+                                        <span class="checkmark"></span>
+                                    </label>
+                                </div>
+                                <div class="w-50 text-md-right">
+                                    <a href="#">Olvidaste la clave?</a>
+                                </div>
+                            </div>
+                        </form>
+                        <p class="text-center">No eres miembro? <a href="{% url 'sign_up' %}">Autenticarme</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

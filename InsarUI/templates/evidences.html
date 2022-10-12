@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+<h2>Evidencias</h2>
+
+
+<a class="btn btn-primary" href="{% url 'evidence-create' study.id %}" style="margin-bottom: 10px">Agregar</a>
+{% if evidences %}
+<a class="btn btn-outline-primary" href="{% url 'studies' %}" style="margin-bottom: 10px">Regresar</a>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for evi in evidences %}
+    {% if study.is_public == 'PUBLIC' or user.is_staff or user.investigator.id == study.investigator.id %}
+    <div class="col-lg-6">
+        <div class="card" style="width: 22rem;">
+            <div class="row g-0">
+                <div class="col-md-4">
+                    <img src="/media/{{evi.image}}" class="img-fluid rounded-start" alt="...">
+                </div>
+                <div class="col-md-8">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ evi.name }}</h5>
+                        <!--                  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>-->
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group" role="group" aria-label="Basic outlined example">
+                            {% if user.is_staff or user.investigator.id == study.investigator.id %}
+                            <a class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top"
+                               title="editar" href="{% url 'evidence-update' study.id evi.id %}">
+                                <i class="bi bi-pencil-fill me-1"> </i>
+                            </a>
+                            <a class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top"
+                               title="eliminar" href="{% url 'evidence-delete-confirm' study.id evi.id %}">
+                                <i class="bi bi-trash-fill me-1"> </i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+{% else %}
+<p>No hay evidencias disponibles. Desea<a href="{% url 'studies' %}"> regresar</a>?</p>
+{% endif %}
+{% endblock %}

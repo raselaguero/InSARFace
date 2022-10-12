@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <p>Desea eliminar la evidencia?</p>
+        <a class='btn btn-success' href="{% url 'evidence-delete' pk pq %}">Confirmar</a>
+        <a class='btn btn-danger' href="{% url 'evidences' pk %}">Cancelar</a>
+    </form>
+{% endblock %}

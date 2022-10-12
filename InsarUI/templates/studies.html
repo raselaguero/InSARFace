@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+<h2>Estudios</h2>
+
+
+<a class="btn btn-primary" href="{% url 'study-add' %}" style="margin-bottom: 10px">Agregar</a>
+
+{% if studies %}
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for study in studies %}
+    {% if study.is_public == 'PUBLIC' or user.is_staff or user.investigator.id == study.investigator.id %}
+    <div class="col-lg-6">
+        <div class="card" style="width: 22rem;">
+            <div class="card-body">
+                <h5 class="card-title">{{ study.name }}</h5>
+                <p class="card-text">{{ study.description|truncatechars:80 }}</p>
+            </div>
+            <div class="card-footer">
+                <div class="btn-group" role="group" aria-label="Basic outlined example">
+                    <a class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="observar"
+                       href="{% url 'study-details' study.id %}">
+                        <i class="bi bi-eye-fill me-1"> </i>
+                    </a>
+                    {% if user.is_staff or user.investigator.id == study.investigator.id %}
+                    <a class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="editar"
+                       href="{% url 'study-update' study.id %}">
+                        <i class="bi bi-pencil-fill me-1"> </i>
+                    </a>
+                    <a class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top"
+                       title="evidencias" href="{% url 'evidences' study.id %}">
+                        <i class="bi bi-pencil me-1"> </i>
+                    </a>
+                    <a class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="eliminar"
+                       href="{% url 'study-delete' study.id %}">
+                        <i class="bi bi-trash-fill me-1"> </i>
+                    </a>
+                    {% endif %}
+                    <a class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="reportar"
+                       href="{% url 'study-report' study.id %}">
+                        <i class="bi bi-file-earmark-pdf-fill me-1"> </i>
+                    </a>
+                    <a class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="descargar"
+                       href="{% url 'study-export' study.id %}">
+                        <i class="bi bi-download me-1"> </i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+{% else %}
+<p>No hay estudios disponibles.</p>
+{% endif %}
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    $('#exampleModalCenter').modal({
+      keyboard: false
+    })
+</script>
+{% endblock %}

@@ -1,0 +1,124 @@
+{% extends 'base-login.html' %}
+
+{% block contenido %}
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-5">
+                <div class="wrap">
+                    <div class="img" style="background-image: url(/static_files/img/img2.jpg);"></div>
+                    <div class="login-wrap p-4 p-md-5">
+                        <form action="" method="post" enctype="multipart/form-data" class="signin-form">
+                            {% csrf_token %}
+                            {% for field in form %}
+                            <div class="form-group mt-3" style="margin-top: 2.5rem !important;">
+                                <input
+                                        type="{% if 'image' in field.label_tag %}file{% else %}text{% endif %}"
+                                        name="{{ field.html_name }}"
+                                        class="form-control"
+                                        maxlength="{% if 'about' in field.label_tag %}250{% endif %}"
+                                        id="{{ field.id_for_label }}"
+                                        required
+                                />
+                                <label class="form-control-placeholder">{{ field.label_tag }}</label>
+                            </div>
+                            {% if field.errors %}
+                            {% for error in field.errors %}
+                            <p style="font-size: 13px;">
+                                {{ error|escape }}
+                            </p>
+                            {% endfor %}
+                            {% endif %}
+                            {% endfor %}
+
+                            <!--                            <div class="form-group mt-3">-->
+                            <!--                                <input type="text" class="form-control" name="name" maxlength="150" id="id_name"-->
+                            <!--                                       required>-->
+                            <!--                                <label class="form-control-placeholder" for="id_name">Nombre y Apellidos</label>-->
+                            <!--                            </div>-->
+                            <!--                            </br>-->
+                            <!--                            <div class="form-group mt-3">-->
+                            <!--                                <input type="text" class="form-control" name="company" maxlength="150" id="id_company"-->
+                            <!--                                       required>-->
+                            <!--                                <label class="form-control-placeholder" for="id_company">Institucion</label>-->
+                            <!--                            </div>-->
+                            <!--                            </br>-->
+                            <!--                            <div class="form-group">-->
+                            <!--                                <input type="text" class="form-control" name="degree"-->
+                            <!--                                       maxlength="150" id="id_degree" required>-->
+                            <!--                                <label class="form-control-placeholder" for="id_degree">Especialidad</label>-->
+                            <!--                            </div>-->
+                            <!--                            </br>-->
+                            <!--                            <div class="form-group mt-3">-->
+                            <!--                                <input type="text" class="form-control" name="country" maxlength="150" id="id_country"-->
+                            <!--                                       required>-->
+                            <!--                                <label class="form-control-placeholder" for="id_country">Pais</label>-->
+                            <!--                            </div>-->
+                            <!--                            </br>-->
+                            <!--                            <div class="form-group mt-3">-->
+                            <!--                                <input type="text" class="form-control" name="address" maxlength="150" id="id_address"-->
+                            <!--                                       required>-->
+                            <!--                                <label class="form-control-placeholder" for="id_address">Direccion</label>-->
+                            <!--                            </div>-->
+                            <!--                            </br>-->
+                            <!--                            <div class="form-group">-->
+                            <!--                                <input type="text" class="form-control" name="email"-->
+                            <!--                                       maxlength="150" id="id_email" required>-->
+                            <!--                                <label class="form-control-placeholder" for="id_email">Correo</label>-->
+                            <!--                            </div>-->
+                            <!--                            </br>-->
+                            <!--                            <div class="form-group">-->
+                            <!--                                <input type="text" class="form-control" name="phone"-->
+                            <!--                                       maxlength="150" id="id_phone" required>-->
+                            <!--                                <label class="form-control-placeholder" for="id_phone">Telefono</label>-->
+                            <!--                            </div>-->
+                            <!--                            </br>-->
+                            <!--                            <div class="form-group">-->
+                            <!--                                <input type="file" class="form-control" name="image"-->
+                            <!--                                       maxlength="150" id="id_image" required>-->
+                            <!--                                <label class="form-control-placeholder" for="id_image">Imagen de perfil</label>-->
+                            <!--                            </div>-->
+                            <!--                            </br>-->
+                            <!--                            <div class="form-group mt-3">-->
+                            <!--                                <input type="text" class="form-control" name="about" maxlength="150" id="id_about"-->
+                            <!--                                       required>-->
+                            <!--                                <label class="form-control-placeholder" for="id_about">Acerca de</label>-->
+                            <!--                            </div>-->
+                            <!--                            </br>-->
+                            <!--                            <div class="form-group mt-3">-->
+                            <!--                                <input type="text" class="form-control" name="twitter" maxlength="150" id="id_twitter"-->
+                            <!--                                       required>-->
+                            <!--                                <label class="form-control-placeholder" for="id_twitter">Perfil de Twitter</label>-->
+                            <!--                            </div>-->
+                            <!--                            </br>-->
+                            <!--                            <div class="form-group mt-3">-->
+                            <!--                                <input type="text" class="form-control" name="facebook" maxlength="150" id="id_facebook"-->
+                            <!--                                       required>-->
+                            <!--                                <label class="form-control-placeholder" for="id_facebook">Perfil de Facebook</label>-->
+                            <!--                            </div>-->
+                            <!--                            </br>-->
+                            <!--                            <div class="form-group mt-3">-->
+                            <!--                                <input type="text" class="form-control" name="instagram" maxlength="150" id="id_instagram"-->
+                            <!--                                       required>-->
+                            <!--                                <label class="form-control-placeholder" for="id_instagram">Perfil de Instagram</label>-->
+                            <!--                            </div>-->
+                            <!--                            </br>-->
+                            <!--                            <div class="form-group mt-3">-->
+                            <!--                                <input type="text" class="form-control" name="linkedin" maxlength="150" id="id_linkedin"-->
+                            <!--                                       required>-->
+                            <!--                                <label class="form-control-placeholder" for="id_linkedin">Perfil de Linkedin</label>-->
+                            <!--                            </div>-->
+                            <!--                            </br>-->
+                            <div class="form-group">
+                                <button type="submit" class="form-control btn btn-primary rounded submit px-3">Agregar
+                                </button>
+                            </div>
+                        </form>
+                        <p class="text-center">Desea <a href="{% url 'investigators' %}">regresar</a>?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

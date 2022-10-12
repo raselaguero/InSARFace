@@ -1,0 +1,231 @@
+{% extends 'base-map.html' %}
+
+{% block contenido %}
+<div class="container" xmlns="http://www.w3.org/1999/html">
+    <div class="body d-md-flex align-items-center justify-content-between">
+        <div class="box-1 mt-md-0 mt-5" style="width: 50%">
+            <div id="map"></div>
+        </div>
+        <div class=" box-2 d-flex flex-column h-100" style="width: 50%">
+            <div class="login-wrap p-4 p-md-5" style="padding-top: 1rem !important;">
+                <form action="" method="post" enctype="multipart/form-data" class="signin-form" name="form_evidence">
+                    {% csrf_token %}
+                    {% for title in form1 %}
+                    <div class="form-group mt-3" style="margin-top: 2.5rem !important;">
+
+                        <input
+                                type="text"
+                                name="{{ title.html_name }}"
+                                class="form-control"
+                                value="{{ title.value }}"
+                                maxlength="50"
+                                id="{{ title.id_for_label }}"
+                                required
+                        />
+                        <label class="form-control-placeholder">{{ title.label_tag }}</label>
+                    </div>
+                    </br>
+                    {% if title.errors %}
+                    {% for error in title.errors %}
+                    <p style="font-size: 13px;">
+                        {{ error|escape }}
+                    </p>
+                    {% endfor %}
+                    {% endif %}
+                    {% endfor %}
+
+
+                    {% for field in form %}
+                    <div class="form-group mt-3">
+                        {% if not 'image' in field.html_name %}
+                        <input
+                                type="{% if 'image' in field.html_name %}file{% else %}text{% endif %}"
+                                name="{{ field.html_name }}"
+                                class="form-control"
+                                value="{{ field.value }}"
+                                maxlength="50"
+                                id="{{ field.id_for_label }}"
+                                required
+                        />
+                        <label class="form-control-placeholder">{{ field.label_tag }}</label>
+                        {% else %}
+                        {{form.image}}
+                        {% endif %}
+                    </div>
+                    </br>
+
+                    {% if field.errors %}
+                    {% for error in field.errors %}
+                    <p style="font-size: 13px;">
+                        {{ error|escape }}
+                    </p>
+                    {% endfor %}
+                    {% endif %}
+                    {% endfor %}
+
+                    <div class="form-group">
+                        <button type="submit" class="form-control btn btn-primary rounded submit px-3">Agregar
+                        </button>
+                    </div>
+                </form>
+                <p class="text-center">Desea <a href="{% url 'evidences' study.id %}">regresar</a>?</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+let geo = {{ geom | safe }}
+var osm = L.tileLayer('http://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution: 'developer for Rasel'});
+var google_maps = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {attribution: 'developer for Rasel'});
+var google_hybrid = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {attribution: 'developer for Rasel'});
+var google_roads = L.tileLayer('https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}', {attribution: 'developer for Rasel'});
+var google_satellite = L.tileLayer('http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {attribution: 'developer for Rasel'});
+var google_terrain = L.tileLayer('https://mt1.google.com/vt/lyrs=t&x={x}&y={y}&z={z}', {attribution: 'developer for Rasel'});
+var stamen_terrain = L.tileLayer('http://a.tile.stamen.com/terrain/{z}/{x}/{y}.png', {attribution: 'developer for Rasel'});
+var stamen_toner = L.tileLayer('http://tile.stamen.com/toner/{z}/{x}/{y}.png', {attribution: 'developer for Rasel'});
+var stamen_watercolor = L.tileLayer('http://tile.stamen.com/watercolor/{z}/{x}/{y}.jpg', {attribution: 'developer for Rasel'});
+var carto_dark = L.tileLayer('http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {attribution: 'developer for Rasel'});
+var carto_light = L.tileLayer('https://cartodb-basemaps-a.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {attribution: 'developer for Rasel'});
+
+var map = L.map('map').setView([21.8411, -78.85452],6).addLayer(osm);
+
+var geojson;
+
+
+var geojsonFeature = {
+    "type": "Feature",
+    "properties": {
+        "name": "Area de estudio"
+    },
+    "geometry": geo
+};
+
+geojson = L.geoJSON(geojsonFeature).addTo(map);
+
+map.fitBounds([[geo["bbox"][1], geo["bbox"][0]], [geo["bbox"][3], geo["bbox"][2]]]);
+
+
+<!--var editableLayers = new L.FeatureGroup().addTo(map);-->
+
+var baseMaps = {
+    "Open Street Map": osm,
+    "Google Maps": google_maps,
+    "Google Hybrid": google_hybrid,
+    "Google Roads": google_roads,
+    "Google Satellite": google_satellite,
+    "Google Terrain": google_terrain,
+    "Stamen Terrain": stamen_terrain,
+    "Stamen Toner": stamen_toner,
+    "Stamen Watercolor": stamen_watercolor,
+    "Carto Dark": carto_dark,
+    "Carto Light": carto_light
+};
+
+L.control.layers(baseMaps).addTo(map);
+L.control.mousePosition().addTo(map);
+L.control.scale().addTo(map);
+L.control.locate().addTo(map);
+L.control.fullscreen({ position: 'topleft', forceSeparateButton: true, forcePseudoFullscreen: true }).addTo(map);
+
+<!--L.geoJSON(geojsonFeature).addTo(map);-->
+
+
+<!--var options = {-->
+<!--        position: 'topleft',-->
+<!--        draw: {-->
+<!--            polyline: false,-->
+<!--            polygon: false,-->
+<!--            {-->
+<!--					shapeOptions: {-->
+<!--						color: 'steelblue'-->
+<!--					},-->
+<!--					allowIntersection: false,-->
+<!--					drawError: {-->
+<!--						color: 'orange',-->
+<!--						timeout: 1000-->
+<!--					},-->
+<!--					showArea: true,-->
+<!--					metric: false,-->
+<!--					repeatMode: true-->
+<!--			},-->
+<!--            circle: false,-->
+<!--            circlemarker: true,-->
+<!--            rectangle: false,-->
+<!--            {-->
+<!--                shapeOptions: {-->
+<!--                    clickable: true-->
+<!--                }-->
+<!--            },-->
+<!--            marker: true-->
+<!--        },-->
+<!--        edit: {-->
+<!--            featureGroup: editableLayers, //REQUIRED!!-->
+<!--            remove: true-->
+<!--        }-->
+<!--    };-->
+
+     map.pm.addControls({
+        position: 'topleft',
+        drawCircle: false,
+        drawPolyline: false,
+        drawRectangle: false,
+        drawPolygon: false,
+        drawCircle: false,
+        drawText: false,
+        dragMode: true,
+        cutPolygon: false,
+        rotateMode: false});
+
+    map.on('pm:create', (e) => {
+        //console.log(e.shape, e.layer._latlng)
+        e.layer.on('pm:edit', (edit) => {  //edit
+        layerManager(edit);
+        });
+        e.layer.on('pm:drag', (drag) => {  //drag
+        layerManager(drag);
+        });
+        layerManager(e);
+    });
+
+    function layerManager(e) {
+        if (e.shape == "Marker" || e.shape == "CircleMarker"){
+            pto = "SRID=4326;POINT(".concat(String(e.layer._latlng.lng)).concat(" ").concat(String(e.layer._latlng.lat)).concat(")");
+            document.getElementsByName('help')[0].placeholder='';
+            document.form_evidence.help.value = pto;
+        }
+    }
+
+    map.on('pm:remove', (e) => {
+        document.form_evidence.help.value  = '';
+        document.getElementsByName('help')[0].placeholder='';
+    })
+
+<!--    var drawControl = new L.Control.Draw(options);-->
+<!--    map.addControl(drawControl);-->
+
+<!--    map.on(L.Draw.Event.CREATED, function (e) {-->
+<!--        var type = e.layerType,-->
+<!--         layer = e.layer;-->
+
+<!--        if (type == "marker" || type == "circle" || type == "circlemarker"){-->
+<!--        console.log("POINT(".concat(String(layer.getLatLng().lng)).concat(",").concat(String(layer.getLatLng().lat)).concat(")"));-->
+<!--            pto = "POINT(".concat(String(layer.getLatLng().lng)).concat(" ").concat(String(layer.getLatLng().lat)).concat(")");-->
+<!--            document.getElementsByName('help')[0].placeholder='';-->
+<!--            document.form_evidence.help.value = pto;-->
+<!--        }-->
+<!--        editableLayers.addLayer(layer);-->
+<!--    });-->
+
+<!--    map.on('draw:deleted', function (e) {-->
+<!--         var layers = e.layers;-->
+<!--         document.form_evidence.point.value = '';-->
+<!--         document.getElementsByName('point')[0].placeholder='';-->
+<!--         layers.eachLayer(function (layer) {-->
+<!--             //do whatever you want; most likely save back to db-->
+<!--         });-->
+<!--     });-->
+</script>
+{% endblock %}

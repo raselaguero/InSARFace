@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action="" method="post">
+    {% csrf_token %}
+    <p>Desea eliminar el usuario?</p>
+    <input class="btn btn-success" type="submit" value="Confirmar"/>
+    <a class='btn btn-danger' href="{% url 'users' %}">Cancelar</a>
+</form>
+{% endblock %}

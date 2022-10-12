@@ -1,0 +1,62 @@
+{% extends 'base-login.html' %}
+
+{% block contenido %}
+<section class="ftco-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-5">
+                <div class="wrap">
+                    <div class="img" style="background-image: url(/static_files/img/images.jpeg);"></div>
+                    <div class="login-wrap p-4 p-md-5">
+                        <div class="d-flex">
+                            <div class="w-100">
+                                <h3 class="mb-4">Descargar</h3>
+                            </div>
+                        </div>
+                        <form action="" method="post" class="signin-form" name="form_study">
+                            {% csrf_token %}
+                            {% for field in form %}
+<!--                            {% if not 'format' in field.html_name %}-->
+<!--                            <div class="form-group mt-3" style="margin-top: 2.5rem !important;">-->
+<!--                                <input-->
+<!--                                        type="text"-->
+<!--                                        name="{{ field.html_name }}"-->
+<!--                                        class="form-control"-->
+<!--                                        maxlength="{% if 'address' in field.label_tag %}250{% endif %}"-->
+<!--                                        id="{{ field.id_for_label }}"-->
+<!--                                        required-->
+<!--                                />-->
+<!--                                <label class="form-control-placeholder">{{ field.label_tag }}</label>-->
+<!--                            </div>-->
+<!--                            {% endif %}-->
+                            {% if 'format' in field.html_name %}
+                            <div class="form-group mt-3" style="margin-top: 1rem !important;">
+                                <label class=""
+                                       style="color: #0d6efd; font-size: 12px; font-weight: 600">FORMATO:</label>
+                                </br>
+                                {{ form.format }}
+                            </div>
+                            {% endif %}
+                            {% if field.errors %}
+                            {% for error in field.errors %}
+                            <p style="font-size: 13px;">
+                                {{ error|escape }}
+                            </p>
+                            {% endfor %}
+                            {% endif %}
+                            {% endfor %}
+
+                            <div class="form-group">
+                                <button type="submit" class="form-control btn btn-primary rounded submit px-3">Aceptar
+                                </button>
+                            </div>
+                        </form>
+                        <p class="text-center">Desea <a href="{% url 'studies' %}">regresar</a>?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

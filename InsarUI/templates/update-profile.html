@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block contenido %}
+
+<div class="pagetitle">
+    <h1>Perfil</h1>
+</div><!-- End Page Title -->
+
+<section class="section profile">
+    {% if investigator %}
+    <div class="row">
+        <div class="col-xl-4">
+
+            <div class="card">
+                <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+
+                    <img src="{{investigator.image.url}}" alt="Profile" class="rounded-circle">
+                    <h2 style="text-align: center;">{{ investigator.name }}</h2>
+                    <h5 style="text-align: center;">{{ investigator.degree }}</h5>
+                    <div class="social-links mt-2">
+                        <a href="{{form.twitter.value}}" class="twitter"><i class="bi bi-twitter"></i></a>
+                        <a href="{{form.facebook.value}}" class="facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="{{form.instagram.value}}" class="instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="{{form.linkedin.value}}" class="linkedin"><i class="bi bi-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-xl-8">
+
+            <div class="card">
+                <div class="card-body pt-3">
+                    <!-- Bordered Tabs -->
+                    <ul class="nav nav-tabs nav-tabs-bordered">
+
+                        <li class="nav-item">
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">
+                                Informacion
+                            </button>
+                        </li>
+                        {% if user.is_staff or user.investigator.id == investigator.id %}
+                        <li class="nav-item">
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Editar Perfil
+                            </button>
+                        </li>
+
+                        {% endif %}
+                    </ul>
+                    <div class="tab-content pt-2">
+
+                        <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                            <h5 class="card-title">Acerca de</h5>
+                            <p class="small fst-italic">{{ investigator.about }}</p>
+
+                            <h5 class="card-title">Detalles de Perfil</h5>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label ">Nombre y Apellidos</div>
+                                <div class="col-lg-9 col-md-8">{{ investigator.name }}</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Institucion</div>
+                                <div class="col-lg-9 col-md-8">{{ investigator.company }}</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Titulo</div>
+                                <div class="col-lg-9 col-md-8">{{ investigator.degree }}</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Pais</div>
+                                <div class="col-lg-9 col-md-8">{{ investigator.country }}</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Direccion</div>
+                                <div class="col-lg-9 col-md-8">{{ investigator.address }}</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Telefono</div>
+                                <div class="col-lg-9 col-md-8">{{ investigator.phone }}</div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-3 col-md-4 label">Correo</div>
+                                <div class="col-lg-9 col-md-8">{{ investigator.email }}</div>
+                            </div>
+
+                        </div>
+
+                        <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+                            <!-- Profile Edit Form -->
+                            <form method="post" action="" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {% for field in form %}
+                                <div class="row mb-3">
+                                    <label class="col-md-4 col-lg-3 col-form-label">{{ field.label_tag }}</label>
+                                    <div class="col-md-3 col-lg-8">
+                                        <input
+                                                type="{% if 'image' in field.label_tag %}file{% else %}text{% endif %}"
+                                                name="{{ field.html_name }}"
+                                                class="form-control"
+                                                value="{{ field.value }}"
+                                                maxlength="{% if 'about' in field.label_tag %}250{% endif %}"
+                                                id="{{ field.id_for_label }}"
+                                                required
+                                        />
+                                    </div>
+                                </div>
+                                </br>
+                                {% if field.errors %}
+                                {% for error in field.errors %}
+                                <p style="font-size: 13px;">
+                                    {{ error|escape }}
+                                </p>
+                                {% endfor %}
+                                {% endif %}
+                                {% endfor %}
+
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-primary">Modificar</button>
+                                </div>
+                            </form>
+                            <!-- End Profile Edit Form -->
+                        </div>
+
+
+                    </div><!-- End Bordered Tabs -->
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% else %}
+    <p>No hay informacion disponible.</p>
+    {% endif %}
+</section>
+
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
+        class="bi bi-arrow-up-short"></i></a>
+{% endblock %}

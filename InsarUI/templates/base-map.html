@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="{% static 'css/leaflet.css' %}" rel="stylesheet">
+    <link href="{% static 'css/leaflet.draw.css' %}" rel="stylesheet">
+    <link href="{% static 'css/L.Control.MousePosition.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/Control.FullScreen.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/L.Control.Locate.min.css' %}"/>
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'js/lib/lightbox2/dist/css/lightbox.min.css' %}">
+    <link rel="stylesheet" href="{% static 'js/src/coordinatedimagepreview.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/Leaflet.TileLegend.css' %}">
+    <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/leaflet-geoman.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/bootstrap-iso.css' %}" rel="stylesheet">
+
+    <title>Title</title>
+
+    <style>
+        #map { height:680px}
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif
+        }
+
+        .container {
+            margin: 50px auto
+        }
+
+        .body {
+            position: relative;
+            width: 1120px;
+            height: 680px;
+            margin: 20px auto;
+            border: 1px solid #dddd;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px
+        }
+
+        .box-2 {
+            padding: 10px
+            width: 30%
+        }
+
+        .box-1{
+            width: 70%
+        }
+
+        .h-1 {
+            font-size: 24px;
+            font-weight: 700
+        }
+
+        .text-muted {
+            font-size: 14px
+        }
+
+        .container .box {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid transparent;
+            text-decoration: none;
+            color: #615f5fdd
+        }
+
+        .box:active,
+        .box:visited {
+            border: 2px solid #ee82ee
+        }
+
+        .box:hover {
+            border: 2px solid #ee82ee
+        }
+
+        .btn.btn-primary {
+            background-color: transparent;
+            color: #ee82ee;
+            border: 0px;
+            padding: 0;
+            font-size: 14px
+        }
+
+        .btn.btn-primary .fas.fa-chevron-right {
+            font-size: 12px
+        }
+
+        .footer .p-color {
+            color: #ee82ee
+        }
+
+        .footer.text-muted {
+            font-size: 10px
+        }
+
+        .fas.fa-times {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            height: 20px;
+            width: 20px;
+            background-color: #f3cff379;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .fas.fa-times:hover {
+            color: #ff0000
+        }
+
+        @media (max-width:767px) {
+            body {
+                padding: 10px
+            }
+
+            .body {
+                width: 100%;
+                height: 100%
+            }
+
+            .box-1 {
+                width: 100%
+            }
+
+            .box-2 {
+                width: 100%;
+                height: 440px
+            }
+        }
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255,255,255,0.8);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 5px;
+        }
+        .legend {
+            line-height: 18px;
+            color: #555;
+        }
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+{% block contenido %}
+
+{% endblock %}
+
+
+</body>
+<script type="text/javascript" src="{% static 'js/leaflet.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/leaflet-src.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/L.Control.MousePosition.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/Control.FullScreen.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/L.Control.Locate.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/leaflet-side-by-side.js' %}"></script>
+<!--<script type="text/javascript" src="{% static 'js/index.js' %}"></script>-->
+<script type="text/javascript" src="{% static 'js/jquery-3.6.0.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/Leaflet.draw.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/Leaflet.Draw.Event.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/Toolbar.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/Tooltip.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/ext/GeometryUtil.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/ext/LatLngUtil.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/ext/LineUtil.Intersect.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/ext/Polygon.Intersect.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/ext/Polyline.Intersect.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/ext/TouchEvents.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/draw/DrawToolbar.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/draw/handler/Draw.Feature.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/draw/handler/Draw.SimpleShape.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/draw/handler/Draw.Polyline.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/draw/handler/Draw.Marker.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/draw/handler/Draw.Circle.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/draw/handler/Draw.CircleMarker.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/draw/handler/Draw.Polygon.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/draw/handler/Draw.Rectangle.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/edit/EditToolbar.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/edit/handler/EditToolbar.Edit.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/edit/handler/EditToolbar.Delete.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/Control.Draw.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/edit/handler/Edit.Poly.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/edit/handler/Edit.SimpleShape.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/edit/handler/Edit.Rectangle.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/edit/handler/Edit.Marker.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/edit/handler/Edit.CircleMarker.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/edit/handler/Edit.Circle.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/popper.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/main.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/lib/JQuery/jquery-1.11.3.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/lib/Leaflet.bouncemarker/bouncemarker.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/src/coordinatedimagepreview.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/lib/lightbox2/dist/js/lightbox.min.js' %}"></script>
+
+<script src="{% static 'js/Leaflet.TileLegend.js' %}"></script>
+
+<script src="{% static 'js/leaflet-geoman.min.js' %}"></script>
+
+<!-- Vendor JS Files -->
+<script src="{% static 'assets/vendor/echarts/echarts.min.js' %}"></script>
+<script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+{% block js %}
+
+{% endblock %}
+</html>
